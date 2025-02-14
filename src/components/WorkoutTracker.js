@@ -160,6 +160,12 @@ const ExerciseRow = styled(motion.tr)`
   }
 `;
 
+const ExerciseInputs = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`;
+
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -187,11 +193,31 @@ function WorkoutTracker({ current1RM, workoutLog, setWorkoutLog }) {
   const [selectedDay, setSelectedDay] = useState("Heavy Squat Day");
   const [inputs, setInputs] = useState({}); // track input per exercise
 
-  const saveWorkout = () => {
-    const entry = { date: new Date().toLocaleDateString(), day: selectedDay, inputs };
-    setWorkoutLog([...workoutLog, entry]);
-    alert("Workout logged");
-    setInputs({});
+  const saveWorkout = async () => {
+    const entry = {
+      date: new Date().toLocaleDateString(),
+      day: selectedDay,
+      inputs
+    };
+    
+    try {
+      await dbOperations.saveWorkout(entry);
+      setWorkoutLog([...workoutLog, entry]);
+      alert("Workout logged successfully!");
+      setInputs({});
+    } catch (error) {
+      alert("Error saving workout: " + error.message);
+    }
+  };
+
+  const handleExerciseInput = (exercise, field, value) => {
+    setInputs(prev => ({
+      ...prev,
+      [exercise]: {
+        ...prev[exercise],
+        [field]: value
+      }
+    }));
   };
 
   return (
@@ -243,11 +269,30 @@ function WorkoutTracker({ current1RM, workoutLog, setWorkoutLog }) {
               <td>{ex.exercise}</td>
               <td>{ex.scheme}</td>
               <td>
-                <Input
-                  type="number"
-                  value={inputs[ex.exercise] || ""}
-                  onChange={(e) => setInputs({ ...inputs, [ex.exercise]: e.target.value })}
-                />
+                <ExerciseInputs>
+                  <Input
+                    type="number"
+                    placeholder="Sets"
+                    value={inputs[ex.exercise]?.sets || ""}
+                    onChange={(e) => handleExerciseInput(ex.exercise, 'sets', e.target.value)}
+                    style={{ width: '60px' }}
+                  />
+                  <span>x</span>
+                  <Input
+                    type="number"
+                    placeholder="Reps"
+                    value={inputs[ex.exercise]?.reps || ""}
+                    onChange={(e) => handleExerciseInput(ex.exercise, 'reps', e.target.value)}
+                    style={{ width: '60px' }}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="kg"
+                    value={inputs[ex.exercise]?.weight || ""}
+                    onChange={(e) => handleExerciseInput(ex.exercise, 'weight', e.target.value)}
+                    style={{ width: '80px' }}
+                  />
+                </ExerciseInputs>
               </td>
               <td>
                 <Input
@@ -255,6 +300,8 @@ function WorkoutTracker({ current1RM, workoutLog, setWorkoutLog }) {
                   min="1"
                   max="10"
                   placeholder="RPE"
+                  value={inputs[ex.exercise]?.rpe || ""}
+                  onChange={(e) => handleExerciseInput(ex.exercise, 'rpe', e.target.value)}
                   style={{ width: '60px' }}
                 />
               </td>
@@ -268,11 +315,30 @@ function WorkoutTracker({ current1RM, workoutLog, setWorkoutLog }) {
               <td>{ex.exercise}</td>
               <td>{ex.scheme}</td>
               <td>
-                <Input
-                  type="number"
-                  value={inputs[ex.exercise] || ""}
-                  onChange={(e) => setInputs({ ...inputs, [ex.exercise]: e.target.value })}
-                />
+                <ExerciseInputs>
+                  <Input
+                    type="number"
+                    placeholder="Sets"
+                    value={inputs[ex.exercise]?.sets || ""}
+                    onChange={(e) => handleExerciseInput(ex.exercise, 'sets', e.target.value)}
+                    style={{ width: '60px' }}
+                  />
+                  <span>x</span>
+                  <Input
+                    type="number"
+                    placeholder="Reps"
+                    value={inputs[ex.exercise]?.reps || ""}
+                    onChange={(e) => handleExerciseInput(ex.exercise, 'reps', e.target.value)}
+                    style={{ width: '60px' }}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="kg"
+                    value={inputs[ex.exercise]?.weight || ""}
+                    onChange={(e) => handleExerciseInput(ex.exercise, 'weight', e.target.value)}
+                    style={{ width: '80px' }}
+                  />
+                </ExerciseInputs>
               </td>
               <td>
                 <Input
@@ -280,6 +346,8 @@ function WorkoutTracker({ current1RM, workoutLog, setWorkoutLog }) {
                   min="1"
                   max="10"
                   placeholder="RPE"
+                  value={inputs[ex.exercise]?.rpe || ""}
+                  onChange={(e) => handleExerciseInput(ex.exercise, 'rpe', e.target.value)}
                   style={{ width: '60px' }}
                 />
               </td>

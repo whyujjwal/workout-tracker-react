@@ -4,6 +4,7 @@ import WorkoutTracker from './components/WorkoutTracker';
 import Dashboard from './components/Dashboard';
 import GlobalStyles from './styles/GlobalStyles';
 import styled from 'styled-components';
+import WorkoutHistory from './components/WorkoutHistory';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -37,7 +38,7 @@ const Navigation = styled.nav`
 `;
 
 function App() {
-  const [screen, setScreen] = useState('rm'); // options: 'rm', 'workout', 'dashboard'
+  const [screen, setScreen] = useState('rm'); // options: 'rm', 'workout', 'dashboard', 'history'
   const [current1RM, setCurrent1RM] = useState({
     Squat: 150,
     Bench: 100,
@@ -53,11 +54,13 @@ function App() {
           <button onClick={() => setScreen('rm')}>1RM Settings</button>
           <button onClick={() => setScreen('workout')}>Workout Log</button>
           <button onClick={() => setScreen('dashboard')}>Dashboard</button>
+          <button onClick={() => setScreen('history')}>History</button>
         </Navigation>
         <hr />
         {screen === 'rm' && <RMSettings current1RM={current1RM} setCurrent1RM={setCurrent1RM} />}
         {screen === 'workout' && <WorkoutTracker current1RM={current1RM} workoutLog={workoutLog} setWorkoutLog={setWorkoutLog} />}
         {screen === 'dashboard' && <Dashboard current1RM={current1RM} workoutLog={workoutLog} />}
+        {screen === 'history' && <WorkoutHistory />}
       </AppContainer>
     </>
   );
